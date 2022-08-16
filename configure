@@ -1733,6 +1733,60 @@ fi
 
 } # ac_fn_c_try_link
 
+# ac_fn_c_check_type LINENO TYPE VAR INCLUDES
+# -------------------------------------------
+# Tests whether TYPE exists after having included INCLUDES, setting cache
+# variable VAR accordingly.
+ac_fn_c_check_type ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
+$as_echo_n "checking for $2... " >&6; }
+if eval \${$3+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  eval "$3=no"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+$4
+int
+main ()
+{
+if (sizeof ($2))
+	 return 0;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+$4
+int
+main ()
+{
+if (sizeof (($2)))
+	    return 0;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+
+else
+  eval "$3=yes"
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+eval ac_res=\$$3
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+
+} # ac_fn_c_check_type
+
 # ac_fn_c_find_intX_t LINENO BITS VAR
 # -----------------------------------
 # Finds a signed integer type with width BITS, setting cache variable VAR
@@ -1862,60 +1916,6 @@ $as_echo "$ac_res" >&6; }
   eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
 
 } # ac_fn_c_find_uintX_t
-
-# ac_fn_c_check_type LINENO TYPE VAR INCLUDES
-# -------------------------------------------
-# Tests whether TYPE exists after having included INCLUDES, setting cache
-# variable VAR accordingly.
-ac_fn_c_check_type ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
-$as_echo_n "checking for $2... " >&6; }
-if eval \${$3+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  eval "$3=no"
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-$4
-int
-main ()
-{
-if (sizeof ($2))
-	 return 0;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-$4
-int
-main ()
-{
-if (sizeof (($2)))
-	    return 0;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-
-else
-  eval "$3=yes"
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-eval ac_res=\$$3
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-
-} # ac_fn_c_check_type
 
 # ac_fn_c_compute_int LINENO EXPR VAR INCLUDES
 # --------------------------------------------
@@ -4224,7 +4224,6 @@ _ACEOF
 esac
 
 
-
 # Check whether --enable-xdf was given.
 if test "${enable_xdf+set}" = set; then :
   enableval=$enable_xdf; if test x$enableval = xyes; then
@@ -4377,6 +4376,51 @@ if test "x$ac_cv_lib_cam_cam_open_device" = xyes; then :
 _ACEOF
 
   LIBS="-lcam $LIBS"
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for iconv in -liconv" >&5
+$as_echo_n "checking for iconv in -liconv... " >&6; }
+if ${ac_cv_lib_iconv_iconv+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-liconv  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char iconv ();
+int
+main ()
+{
+return iconv ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_iconv_iconv=yes
+else
+  ac_cv_lib_iconv_iconv=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_iconv_iconv" >&5
+$as_echo "$ac_cv_lib_iconv_iconv" >&6; }
+if test "x$ac_cv_lib_iconv_iconv" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBICONV 1
+_ACEOF
+
+  LIBS="-liconv $LIBS"
 
 fi
 
@@ -4534,11 +4578,104 @@ $as_echo "#define HAVE_SYS_WAIT_H 1" >>confdefs.h
 
 fi
 
-for ac_header in getopt.h sys/stat.h stdlib.h unistd.h linux/unistd.h \
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for stdbool.h that conforms to C99" >&5
+$as_echo_n "checking for stdbool.h that conforms to C99... " >&6; }
+if ${ac_cv_header_stdbool_h+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+             #include <stdbool.h>
+             #ifndef bool
+              "error: bool is not defined"
+             #endif
+             #ifndef false
+              "error: false is not defined"
+             #endif
+             #if false
+              "error: false is not 0"
+             #endif
+             #ifndef true
+              "error: true is not defined"
+             #endif
+             #if true != 1
+              "error: true is not 1"
+             #endif
+             #ifndef __bool_true_false_are_defined
+              "error: __bool_true_false_are_defined is not defined"
+             #endif
+
+             struct s { _Bool s: 1; _Bool t; } s;
+
+             char a[true == 1 ? 1 : -1];
+             char b[false == 0 ? 1 : -1];
+             char c[__bool_true_false_are_defined == 1 ? 1 : -1];
+             char d[(bool) 0.5 == true ? 1 : -1];
+             /* See body of main program for 'e'.  */
+             char f[(_Bool) 0.0 == false ? 1 : -1];
+             char g[true];
+             char h[sizeof (_Bool)];
+             char i[sizeof s.t];
+             enum { j = false, k = true, l = false * true, m = true * 256 };
+             /* The following fails for
+                HP aC++/ANSI C B3910B A.05.55 [Dec 04 2003]. */
+             _Bool n[m];
+             char o[sizeof n == m * sizeof n[0] ? 1 : -1];
+             char p[-1 - (_Bool) 0 < 0 && -1 - (bool) 0 < 0 ? 1 : -1];
+             /* Catch a bug in an HP-UX C compiler.  See
+                http://gcc.gnu.org/ml/gcc-patches/2003-12/msg02303.html
+                http://lists.gnu.org/archive/html/bug-coreutils/2005-11/msg00161.html
+              */
+             _Bool q = true;
+             _Bool *pq = &q;
+
+int
+main ()
+{
+
+             bool e = &s;
+             *pq |= q;
+             *pq |= ! q;
+             /* Refer to every declared value, to avoid compiler optimizations.  */
+             return (!a + !b + !c + !d + !e + !f + !g + !h + !i + !!j + !k + !!l
+                     + !m + !n + !o + !p + !q + !pq);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  ac_cv_header_stdbool_h=yes
+else
+  ac_cv_header_stdbool_h=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_header_stdbool_h" >&5
+$as_echo "$ac_cv_header_stdbool_h" >&6; }
+   ac_fn_c_check_type "$LINENO" "_Bool" "ac_cv_type__Bool" "$ac_includes_default"
+if test "x$ac_cv_type__Bool" = xyes; then :
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE__BOOL 1
+_ACEOF
+
+
+fi
+
+
+if test $ac_cv_header_stdbool_h = yes; then
+
+$as_echo "#define HAVE_STDBOOL_H 1" >>confdefs.h
+
+fi
+
+for ac_header in assert.h getopt.h stdlib.h stdbool.h unistd.h linux/unistd.h \
 libc.h fcntl.h limits.h sys/file.h sys/ioctl.h sys/time.h strings.h string.h \
 sys/param.h memory.h malloc.h io.h signal.h sys/signal.h utime.h sgtty.h \
 sys/floppy.h mntent.h sys/sysmacros.h netinet/in.h netinet/tcp.h assert.h \
-iconv.h wctype.h wchar.h locale.h linux/fs.h
+iconv.h wctype.h wchar.h locale.h xlocale.h linux/fs.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -5413,10 +5550,10 @@ _ACEOF
 
 for ac_func in strerror random srandom strchr strrchr lockf flock \
 strcasecmp strncasecmp strnlen atexit on_exit getpass memmove \
-strdup strndup strcspn strspn strtoul strtol strtoll memcpy strpbrk memset \
-setenv seteuid setresuid setpgrp \
+strdup strndup strcspn strspn strtoul strtol strtoll strtoi strtoui \
+memcpy strpbrk memset setenv seteuid setresuid setpgrp \
 tcsetattr tcflush basename fchdir media_oldaliases llseek lseek64 \
-snprintf stat64 setlocale \
+snprintf stat64 setlocale toupper_l strncasecmp_l \
 wcsdup wcscasecmp wcsnlen putwc \
 getuserid getgroupid \
 alarm sigaction usleep
